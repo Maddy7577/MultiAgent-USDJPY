@@ -10,12 +10,21 @@ last_h1_eval_time: str = "never"
 last_daily_refresh_time: str = "never"
 
 
-def _h1_evaluation_stub():
-    """Placeholder for Phase 2: full 20-strategy evaluation cycle."""
+def _h1_evaluation():
+    """Full 20-strategy evaluation cycle — runs on every H1 candle close."""
     global last_h1_eval_time
     from datetime import datetime, timezone
-    last_h1_eval_time = datetime.now(tz=timezone.utc).isoformat()
-    logger.debug("H1 evaluation cycle triggered — strategy engine not yet active (Phase 2)")
+    from backend.strategies.evaluation_orchestrator import run_evaluation_cycle
+    from backend.db import signal_store
+
+    try:
+        results = run_evaluation_cycle()
+        if signal_store.is_initialized():
+            signal_store.batch_insert_signals(results)
+        last_h1_eval_time = datetime.now(tz=timezone.utc).isoformat()
+    except Exception as exc:
+        logger.error(f"H1 evaluation cycle failed: {exc}", exc_info=True)
+        last_h1_eval_time = f"ERROR: {exc}"
 
 
 def _h4_refresh():
@@ -44,7 +53,7 @@ def _daily_refresh():
 def start():
     # H1 close evaluation — fires at HH:02:00 UTC every hour
     _scheduler.add_job(
-        _h1_evaluation_stub,
+        _h1_evaluation,
         CronTrigger(minute=2, timezone="UTC"),
         id="h1_eval",
         replace_existing=True,

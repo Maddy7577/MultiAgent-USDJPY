@@ -49,3 +49,6 @@ CACHE_TTL_DAILY = 24 * 3600
 CONFIDENCE_THRESHOLD = 75
 PROBABILITY_THRESHOLD = 70
 MIN_RRR = 1.5
+
+# BoJ policy rate — update manually when BoJ changes rates
+BOJ_RATE: float = 0.75  # as of December 2025
