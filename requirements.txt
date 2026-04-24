@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+MetaTrader5
+fredapi
+yfinance
+pandas
+numpy
+icalendar
+requests
+apscheduler>=3.9,<4.0
+python-dotenv
