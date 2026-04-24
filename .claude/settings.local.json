@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(del /f \"data\\\\test_phase1.db\")"
+      "Bash(del /f \"data\\\\test_phase1.db\")",
+      "Bash(py -c \"from backend import main; print\\('import ok'\\)\")",
+      "Bash(py -c ' *)",
+      "Bash(python *)",
+      "Bash(python3 *)",
+      "PowerShell(Invoke-RestMethod -Uri \"http://localhost:8000/api/strategy/1\" -Method GET | ConvertTo-Json -Depth 6)"
     ]
   }
 }

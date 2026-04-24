@@ -19,9 +19,25 @@ def initialize(db_path: Path):
     schema_path = Path(__file__).parent / "schema.sql"
     with sqlite3.connect(str(db_path)) as conn:
         conn.executescript(schema_path.read_text(encoding="utf-8"))
+        _migrate(conn)
         conn.commit()
 
     logger.info(f"Database ready at {db_path}")
+
+
+def _migrate(conn: sqlite3.Connection):
+    """Add columns introduced in Phase 2 if they don't exist yet."""
+    new_columns = [
+        ("strategy_type", "TEXT"),
+        ("wait_zone", "TEXT"),
+        ("conditions_to_meet", "TEXT"),
+        ("agent_scores", "TEXT"),
+    ]
+    for col, col_type in new_columns:
+        try:
+            conn.execute(f"ALTER TABLE signals ADD COLUMN {col} {col_type}")
+        except sqlite3.OperationalError:
+            pass
 
 
 def _conn() -> sqlite3.Connection:
@@ -32,8 +48,8 @@ def _conn() -> sqlite3.Connection:
 
 def _serialize(row: dict) -> dict:
     out = row.copy()
-    for key in ("reasons_for", "reasons_against"):
-        if isinstance(out.get(key), list):
+    for key in ("reasons_for", "reasons_against", "conditions_to_meet", "agent_scores"):
+        if isinstance(out.get(key), (list, dict)):
             out[key] = json.dumps(out[key])
     for key in ("timestamp", "next_event_time"):
         if isinstance(out.get(key), datetime):
@@ -46,19 +62,33 @@ def insert_signal(signal: dict) -> int:
     signal.setdefault("outcome", "PENDING")
     sql = """
         INSERT INTO signals (
-            timestamp, strategy_id, strategy_name, status, direction,
+            timestamp, strategy_id, strategy_name, strategy_type, status, direction,
             entry, sl, tp1, tp2, tp3, rrr, confidence, probability,
-            timeframes, reasons_for, reasons_against, verdict_summary, outcome
+            timeframes, wait_zone, conditions_to_meet,
+            reasons_for, reasons_against, verdict_summary, agent_scores, outcome
         ) VALUES (
-            :timestamp, :strategy_id, :strategy_name, :status, :direction,
+            :timestamp, :strategy_id, :strategy_name, :strategy_type, :status, :direction,
             :entry, :sl, :tp1, :tp2, :tp3, :rrr, :confidence, :probability,
-            :timeframes, :reasons_for, :reasons_against, :verdict_summary, :outcome
+            :timeframes, :wait_zone, :conditions_to_meet,
+            :reasons_for, :reasons_against, :verdict_summary, :agent_scores, :outcome
         )
     """
     with _conn() as conn:
         cursor = conn.execute(sql, signal)
         conn.commit()
         return cursor.lastrowid
+
+
+def batch_insert_signals(signals: list) -> int:
+    """Insert multiple StrategyResult objects from one evaluation cycle."""
+    count = 0
+    for signal in signals:
+        if hasattr(signal, "to_db_dict"):
+            insert_signal(signal.to_db_dict())
+        elif isinstance(signal, dict):
+            insert_signal(signal)
+        count += 1
+    return count
 
 
 def get_signals(page: int = 1, per_page: int = 50, strategy_id: Optional[int] = None) -> dict:
