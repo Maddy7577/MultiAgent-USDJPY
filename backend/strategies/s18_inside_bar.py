@@ -94,11 +94,22 @@ class S18InsideBar(BaseStrategy):
             return self._no_trade(["Inside bar broke against trend direction — skipping counter-trend"])
         else:
             wait_direction = "BUY" if trend == "up" else "SELL"
+            if wait_direction == "BUY":
+                proj_entry = round(inside_high + 2 * pip, 3)
+                proj_sl = round(mother_low - 2 * pip, 3)
+                proj_risk = proj_entry - proj_sl
+                proj_tp1 = round(proj_entry + 2 * proj_risk, 3)
+            else:
+                proj_entry = round(inside_low - 2 * pip, 3)
+                proj_sl = round(mother_high + 2 * pip, 3)
+                proj_risk = proj_sl - proj_entry
+                proj_tp1 = round(proj_entry - 2 * proj_risk, 3)
             return self._wait(wait_direction,
                               f"Inside bar setup valid — wait for break of {inside_high:.3f} (up) or {inside_low:.3f} (down)",
                               ["Trend-aligned break of inside bar high/low"],
                               [f"Inside bar ({inside_low:.3f}–{inside_high:.3f}), mother {mother_size*100:.0f} pips"],
-                              ["No breakout yet"])
+                              ["No breakout yet"],
+                              entry=proj_entry, sl=proj_sl, tp1=proj_tp1)
 
         rrr = rrr_calc(entry, sl, tp1)
         htf_conflict = (direction == "BUY" and trend != "up") or (direction == "SELL" and trend != "down")

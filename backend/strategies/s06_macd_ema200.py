@@ -87,26 +87,26 @@ class S6MacdEma200(BaseStrategy):
         else:
             return self._no_trade(["Regime not clear"])
 
-        if not (c2_long if direction == "BUY" else c2_short):
-            return self._wait(direction,
-                              "Waiting for MACD cross",
-                              [c for c in (long_conds if direction == "BUY" else short_conds) if c not in reasons_for],
-                              reasons_for, reasons_against)
-
+        h1_df = self.ohlcv.get("H1")
         if direction == "BUY":
-            h1_df = self.ohlcv.get("H1")
             recent_low = float(h1_df["low"].tail(5).min()) if h1_df is not None else h1_close - h1_atr
             entry = h1_close
             sl = recent_low - 0.2 * h1_atr
             risk = entry - sl
             tp1 = entry + 2 * risk
         else:
-            h1_df = self.ohlcv.get("H1")
             recent_high = float(h1_df["high"].tail(5).max()) if h1_df is not None else h1_close + h1_atr
             entry = h1_close
             sl = recent_high + 0.2 * h1_atr
             risk = sl - entry
             tp1 = entry - 2 * risk
+
+        if not (c2_long if direction == "BUY" else c2_short):
+            return self._wait(direction,
+                              "Waiting for MACD cross",
+                              [c for c in (long_conds if direction == "BUY" else short_conds) if c not in reasons_for],
+                              reasons_for, reasons_against,
+                              entry=round(entry, 3), sl=round(sl, 3), tp1=round(tp1, 3))
 
         rrr = rrr_calc(entry, sl, tp1)
         htf_conflict = not (c1_long if direction == "BUY" else c1_short)

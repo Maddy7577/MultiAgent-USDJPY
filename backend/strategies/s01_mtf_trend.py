@@ -113,15 +113,6 @@ class S1MtfTrend(BaseStrategy):
             reasons_against = [c for c in short_conds if c not in short_met]
             swing_ref = h1_swing_high or (h1_close + 1.5 * atr_h1)
 
-        # ── WAIT check ──────────────────────────────────────────────────────
-        compliance = conditions_met / conditions_total
-        if compliance < 0.75:
-            missing = [c for c in (long_conds if direction == "BUY" else short_conds)
-                       if c not in reasons_for]
-            return self._wait(direction,
-                              f"Waiting for H1 MACD cross and H4 pullback to EMA20",
-                              missing, reasons_for, reasons_against)
-
         # ── Trade parameters ────────────────────────────────────────────────
         if direction == "BUY":
             entry = h1_close
@@ -135,6 +126,16 @@ class S1MtfTrend(BaseStrategy):
             risk = sl - entry
             tp1 = entry - risk
             tp2 = entry - 2 * risk
+
+        # ── WAIT check ──────────────────────────────────────────────────────
+        compliance = conditions_met / conditions_total
+        if compliance < 0.75:
+            missing = [c for c in (long_conds if direction == "BUY" else short_conds)
+                       if c not in reasons_for]
+            return self._wait(direction,
+                              f"Waiting for H1 MACD cross and H4 pullback to EMA20",
+                              missing, reasons_for, reasons_against,
+                              entry=round(entry, 3), sl=round(sl, 3), tp1=round(tp1, 3))
 
         rrr = rrr_calc(entry, sl, tp1)
 

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>USDJPY Smart Agent — Strategies</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<nav class="nav">
+  <span class="nav-title">USDJPY Smart Agent</span>
+  <a href="/index.html" class="nav-link">Dashboard</a>
+  <a href="/strategies.html" class="nav-link">Strategies</a>
+  <span class="mt5-dot" id="mt5-dot" title="MT5 status"></span>
+  <span class="nav-price" id="nav-price">—</span>
+  <span class="nav-clock" id="nav-clock">—</span>
+  <span class="nav-countdown" id="nav-countdown">Refreshing in: 60s</span>
+</nav>
+
+<div class="stale-banner" id="stale-banner"></div>
+
+<div class="container">
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-btn active" data-filter="all">All <span id="count-all">(20)</span></button>
+    <button class="filter-btn" data-filter="VALID_TRADE">Valid Trade <span id="count-valid">(0)</span></button>
+    <button class="filter-btn" data-filter="WAIT_FOR_LEVELS">Wait for Levels <span id="count-wait">(0)</span></button>
+    <button class="filter-btn" data-filter="NO_TRADE">No Trade <span id="count-no-trade">(0)</span></button>
+  </div>
+  <div class="cards-grid" id="cards-grid">
+    <div class="loading-msg">Loading strategies…</div>
+  </div>
+</div>
+
+<script src="/js/shared.js"></script>
+<script src="/js/strategies.js"></script>
+</body>
+</html>

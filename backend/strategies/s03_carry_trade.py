@@ -83,12 +83,6 @@ class S3CarryTrade(BaseStrategy):
         if compliance < 0.5:
             return self._no_trade(["Less than 2 of 4 carry-trade conditions met"] + reasons_against)
 
-        if compliance < 0.75:
-            return self._wait("BUY",
-                              "Wait for H4 pullback to EMA20 with bullish reversal + RSI 40-55",
-                              [c for c in long_conds if c not in long_met],
-                              reasons_for, reasons_against)
-
         direction = "BUY"
         entry = h4_close
         sl = (h4_swing_low or entry - 1.5 * h4_atr) - 0.5 * h4_atr
@@ -96,6 +90,13 @@ class S3CarryTrade(BaseStrategy):
         risk = entry - sl
         tp1 = entry + 2 * risk
         tp2 = entry + 3 * risk
+
+        if compliance < 0.75:
+            return self._wait("BUY",
+                              "Wait for H4 pullback to EMA20 with bullish reversal + RSI 40-55",
+                              [c for c in long_conds if c not in long_met],
+                              reasons_for, reasons_against,
+                              entry=round(entry, 3), sl=round(sl, 3), tp1=round(tp1, 3))
         rrr = rrr_calc(entry, sl, tp1)
 
         htf_conflict = not c1

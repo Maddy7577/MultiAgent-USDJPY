@@ -69,11 +69,20 @@ class S13LondonBreakout(BaseStrategy):
 
         if not broke_high and not broke_low:
             direction = "BUY" if bullish_trend else "SELL" if bearish_trend else "BUY"
+            if direction == "BUY":
+                proj_entry = round(range_high + 3 * pip, 3)
+                proj_sl = round(range_low - 3 * pip, 3)
+                proj_tp1 = round(proj_entry + range_size, 3)
+            else:
+                proj_entry = round(range_low - 3 * pip, 3)
+                proj_sl = round(range_high + 3 * pip, 3)
+                proj_tp1 = round(proj_entry - range_size, 3)
             return self._wait(direction,
                               f"Pre-London range {range_low:.3f}–{range_high:.3f} ({range_pips:.0f} pips) — awaiting breakout",
                               ["Break of range aligned with H1 trend"],
                               [f"Range valid: {range_pips:.0f} pips"],
-                              ["No breakout yet"])
+                              ["No breakout yet"],
+                              entry=proj_entry, sl=proj_sl, tp1=proj_tp1)
 
         # Trend filter — only take trend-aligned breakout
         if broke_high and not bullish_trend:

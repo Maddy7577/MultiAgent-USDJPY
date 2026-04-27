@@ -110,11 +110,13 @@ class S19PivotBreakout(BaseStrategy):
             reasons_against = [r for r in reasons_against if r]
 
         else:
+            proj_sl = round(R1 - 0.5 * h1_atr, 3)
             return self._wait("BUY",
                               f"Pivot levels: S1={S1:.3f} / P={P:.3f} / R1={R1:.3f} — awaiting breakout",
                               ["Strong-body close above R1 or below S1"],
                               [f"Pivots: R1={R1:.3f}, S1={S1:.3f}, in session"],
-                              ["No breakout of R1/S1 yet"])
+                              ["No breakout of R1/S1 yet"],
+                              entry=round(R1, 3), sl=proj_sl, tp1=round(float(R2), 3))
 
         rrr = rrr_calc(entry, sl, tp1)
         htf_conflict = (direction == "BUY" and not ema50_bullish) or (direction == "SELL" and not ema50_bearish)

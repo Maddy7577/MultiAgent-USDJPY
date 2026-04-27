@@ -39,11 +39,14 @@ class S12Donchian(BaseStrategy):
         broke_low = h4_close < dc20_low
 
         if not broke_high and not broke_low:
+            proj_sl = round(dc20_high - 2 * h4_atr, 3)
+            proj_tp1 = round(dc20_high + 2 * h4_atr, 3)
             return self._wait("BUY",
                               f"No 20-bar Donchian breakout — watching {dc20_high:.3f} (high) / {dc20_low:.3f} (low)",
                               ["Break above 20-bar high or below 20-bar low"],
                               [f"Donchian range: {dc20_low:.3f}–{dc20_high:.3f}"],
-                              ["No breakout yet"])
+                              ["No breakout yet"],
+                              entry=round(dc20_high, 3), sl=proj_sl, tp1=proj_tp1)
 
         if broke_high:
             direction = "BUY"

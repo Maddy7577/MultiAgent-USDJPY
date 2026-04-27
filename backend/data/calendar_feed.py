@@ -96,6 +96,14 @@ def is_high_impact_event_soon(url: str, currencies: set, within_minutes: int = 3
     return any(now <= e["datetime_utc"] <= cutoff for e in events)
 
 
+def get_recent_events(url: str, currencies: set, within_minutes: int = 90) -> List[dict]:
+    """Return high-impact events that fired within the last `within_minutes` minutes."""
+    events = fetch_calendar(url, currencies)
+    now = datetime.now(tz=timezone.utc)
+    cutoff = now - timedelta(minutes=within_minutes)
+    return [e for e in events if cutoff <= e["datetime_utc"] <= now]
+
+
 def get_next_events(url: str, currencies: set, count: int = 5) -> List[dict]:
     """Return the next N upcoming high-impact events, sorted by time."""
     events = fetch_calendar(url, currencies)

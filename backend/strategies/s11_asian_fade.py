@@ -109,10 +109,13 @@ class S11AsianFade(BaseStrategy):
             reasons_for = [f"ADX {adx_h1:.1f} — ranging regime",
                            f"Asian range: {range_pips:.0f} pips ({range_low:.3f}–{range_high:.3f})"]
             if not at_low and not at_high:
+                proj_sl = round(range_low - 10 * pip, 3)
+                proj_tp1 = round((range_high + range_low) / 2, 3)
                 return self._wait("BUY",
                                   f"Price mid-range — wait for touch of {range_low:.3f} (RSI<30) or {range_high:.3f} (RSI>70)",
                                   ["Price at range extreme with RSI confirmation"],
-                                  reasons_for, ["Price not at range extreme"])
+                                  reasons_for, ["Price not at range extreme"],
+                                  entry=round(range_low, 3), sl=proj_sl, tp1=proj_tp1)
             return self._no_trade([
                 "Range conditions not fully met",
                 f"RSI: {h1_rsi:.0f} | At low: {at_low} | At high: {at_high}"

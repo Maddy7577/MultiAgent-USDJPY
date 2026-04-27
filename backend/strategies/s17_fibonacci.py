@@ -84,13 +84,15 @@ class S17Fibonacci(BaseStrategy):
             return self._wait(direction,
                               f"Wait for pullback to golden pocket {fib_618:.3f}–{fib_50:.3f}",
                               ["Price in 50-61.8% Fib zone", "Reversal candle at zone"],
-                              reasons_for, reasons_against)
+                              reasons_for, reasons_against,
+                              entry=round(fib_618, 3), sl=round(sl, 3), tp1=round(tp1, 3))
 
         if not reversal_candle:
             return self._wait(direction,
                               f"In golden pocket — waiting for reversal candle",
                               ["Reversal candle at Fib zone"],
-                              reasons_for, reasons_against)
+                              reasons_for, reasons_against,
+                              entry=round(entry_val, 3), sl=round(sl, 3), tp1=round(tp1, 3))
 
         rrr = rrr_calc(entry_val, sl, tp1)
         htf_conflict = not d_aligned

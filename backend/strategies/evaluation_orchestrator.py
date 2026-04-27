@@ -84,14 +84,21 @@ def _build_context(ohlcv: dict) -> dict:
     next_events = calendar_feed.get_next_events(
         config.CALENDAR_URL, config.HIGH_IMPACT_CURRENCIES, count=5
     )
+    recent_events = calendar_feed.get_recent_events(
+        config.CALENDAR_URL, config.HIGH_IMPACT_CURRENCIES, within_minutes=90
+    )
 
-    # Serialize next_events for JSON safety
-    safe_events = []
-    for ev in next_events:
-        safe_ev = dict(ev)
-        if hasattr(safe_ev.get("datetime_utc"), "isoformat"):
-            safe_ev["datetime_utc"] = safe_ev["datetime_utc"].isoformat()
-        safe_events.append(safe_ev)
+    def _serialize_events(events):
+        safe = []
+        for ev in events:
+            safe_ev = dict(ev)
+            if hasattr(safe_ev.get("datetime_utc"), "isoformat"):
+                safe_ev["datetime_utc"] = safe_ev["datetime_utc"].isoformat()
+            safe.append(safe_ev)
+        return safe
+
+    safe_events = _serialize_events(next_events)
+    safe_recent_events = _serialize_events(recent_events)
 
     return {
         "current_price": current_price,
@@ -103,6 +110,7 @@ def _build_context(ohlcv: dict) -> dict:
         "vix": vix,
         "news_imminent": news_imminent,
         "next_events": safe_events,
+        "recent_events": safe_recent_events,
     }
 
 

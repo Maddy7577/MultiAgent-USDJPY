@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>USDJPY Smart Agent — Dashboard</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<nav class="nav">
+  <span class="nav-title">USDJPY Smart Agent</span>
+  <a href="/index.html" class="nav-link">Dashboard</a>
+  <a href="/strategies.html" class="nav-link">Strategies</a>
+  <span class="mt5-dot" id="mt5-dot" title="MT5 status"></span>
+  <span class="nav-price" id="nav-price">—</span>
+  <span class="nav-clock" id="nav-clock">—</span>
+  <span class="nav-countdown" id="nav-countdown">Refreshing in: 60s</span>
+</nav>
+
+<div class="stale-banner" id="stale-banner"></div>
+
+<div class="container">
+
+  <!-- Row 1: Price + Session -->
+  <div class="section">
+    <div class="price-row">
+      <div>
+        <div class="price-bid" id="price-bid">—</div>
+        <div class="price-spread" id="price-spread">Spread: — pips</div>
+      </div>
+      <div>
+        <div style="color:var(--text-muted);font-size:0.8rem;margin-bottom:0.25rem;">Ask</div>
+        <div class="price-ask" id="price-ask">—</div>
+      </div>
+      <div>
+        <div class="session-badge" id="session-badge">—</div>
+        <div class="session-next" id="session-next"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: Market Context Strip -->
+  <div class="section">
+    <div class="tile-strip">
+      <div class="tile">
+        <div class="tile-label">DXY</div>
+        <div class="tile-value" id="tile-dxy">—</div>
+      </div>
+      <div class="tile">
+        <div class="tile-label">US 10Y Yield</div>
+        <div class="tile-value" id="tile-us10y">—</div>
+        <div class="tile-sub">%</div>
+      </div>
+      <div class="tile">
+        <div class="tile-label">VIX</div>
+        <div class="tile-value" id="tile-vix">—</div>
+        <div class="tile-sub" id="tile-vix-regime">—</div>
+      </div>
+      <div class="tile">
+        <div class="tile-label">Next Event</div>
+        <div class="tile-value" id="tile-event-countdown" style="font-size:1.2rem">—</div>
+        <div class="tile-sub" id="tile-event-name">—</div>
+        <span class="badge" id="tile-event-impact" style="margin-top:0.25rem"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: Signal Summary + Active Signals -->
+  <div class="section col-split">
+
+    <!-- Left: Signal Summary Counts -->
+    <div>
+      <h3 style="margin-bottom:1rem;font-size:0.875rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">Signal Summary</h3>
+      <div class="count-group">
+        <div class="count-badge count-badge-valid">
+          <span class="count" id="count-valid">—</span>
+          <span class="label">Valid Trade</span>
+        </div>
+        <div class="count-badge count-badge-wait">
+          <span class="count" id="count-wait">—</span>
+          <span class="label">Wait for Levels</span>
+        </div>
+        <div class="count-badge count-badge-no-trade">
+          <span class="count" id="count-no-trade">—</span>
+          <span class="label">No Trade</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Active Signals Panel -->
+    <div>
+      <div class="active-panel">
+        <div class="active-panel-header">Active Signals</div>
+        <div id="active-signals-list">
+          <div class="empty-state">Loading…</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="/js/shared.js"></script>
+<script src="/js/dashboard.js"></script>
+</body>
+</html>

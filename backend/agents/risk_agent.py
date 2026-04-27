@@ -10,6 +10,7 @@ class RiskResult:
     risk_score: float   # 0–10 (10 = maximum risk / strongest case against)
     risk_flags: list = field(default_factory=list)
     critical_flags: list = field(default_factory=list)
+    conditions: list = field(default_factory=list)  # 11 dimensions, each {label, result}
     agent_id: int = 1
 
 
@@ -93,9 +94,54 @@ class RiskAgent:
             raw = max(0.0, min(1.0, raw + variance))
 
         score = round(min(10.0, raw * 10.0), 2)
+        conditions = self._build_conditions(
+            news_imminent, htf_conflict, rrr, spread_pips,
+            current_price, direction, strategy_flags
+        )
         return RiskResult(
             risk_score=score,
             risk_flags=risk_flags,
             critical_flags=critical_flags,
+            conditions=conditions,
             agent_id=self.agent_id,
         )
+
+    def _build_conditions(
+        self,
+        news_imminent: bool,
+        htf_conflict: bool,
+        rrr: Optional[float],
+        spread_pips: float,
+        current_price: float,
+        direction: Optional[str],
+        strategy_flags: list,
+    ) -> list:
+        def rrr_result(r: Optional[float]) -> str:
+            if r is None or r < 1.0: return "not_met"
+            if r < 1.5:              return "partial"
+            return "met"
+
+        def spread_result(s: float) -> str:
+            if s > 3.0:  return "not_met"
+            if s > 1.5:  return "partial"
+            return "met"
+
+        htf_ok      = "not_met" if htf_conflict else "met"
+        news_ok     = "not_met" if news_imminent else "met"
+        flags_ok    = "not_met" if len(strategy_flags) > 2 else ("partial" if strategy_flags else "met")
+        macro_ok    = "not_met" if (news_imminent or (direction == "BUY" and current_price > 155.00)) else "met"
+        inval_ok    = "not_met" if htf_conflict else ("partial" if strategy_flags else "met")
+
+        return [
+            {"label": "Strategy rule compliance",           "result": "partial"},
+            {"label": "Market structure quality",           "result": htf_ok},
+            {"label": "Trend alignment (higher timeframe)", "result": htf_ok},
+            {"label": "Confluence factors",                 "result": flags_ok},
+            {"label": "Volatility conditions",              "result": spread_result(spread_pips)},
+            {"label": "Entry precision",                    "result": "partial"},
+            {"label": "Stop loss logic",                    "result": rrr_result(rrr)},
+            {"label": "Take profit realism",                "result": rrr_result(rrr)},
+            {"label": "Risk-reward ratio",                  "result": rrr_result(rrr)},
+            {"label": "Invalidation strength",              "result": inval_ok},
+            {"label": "Macro / news sensitivity",           "result": macro_ok},
+        ]

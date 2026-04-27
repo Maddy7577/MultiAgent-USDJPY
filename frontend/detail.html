@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>USDJPY Smart Agent — Strategy Detail</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<nav class="nav">
+  <span class="nav-title">USDJPY Smart Agent</span>
+  <a href="/index.html" class="nav-link">Dashboard</a>
+  <a href="/strategies.html" class="nav-link">Strategies</a>
+  <span class="mt5-dot" id="mt5-dot" title="MT5 status"></span>
+  <span class="nav-price" id="nav-price">—</span>
+  <span class="nav-clock" id="nav-clock">—</span>
+  <span class="nav-countdown" id="nav-countdown">Refreshing in: 60s</span>
+</nav>
+
+<div class="stale-banner" id="stale-banner"></div>
+
+<div class="container" id="main-content">
+  <div class="loading-msg" id="loading-msg">Loading strategy…</div>
+  <div id="error-view" style="display:none" class="error-page">
+    <h2>Invalid Strategy</h2>
+    <p>The strategy ID in the URL is not valid (must be 1–20).</p>
+    <a href="/strategies.html" class="back-link">← Return to Strategies</a>
+  </div>
+  <div id="detail-view" style="display:none">
+
+    <!-- Header -->
+    <div class="section">
+      <a href="/strategies.html" class="back-link" style="font-size:0.825rem;">← Back to Strategies</a>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-top:0.75rem;flex-wrap:wrap;gap:0.5rem;">
+        <div>
+          <h1 id="detail-name" style="font-size:1.5rem;font-weight:700;margin-bottom:0.5rem;">—</h1>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;" id="detail-tags"></div>
+        </div>
+        <div style="text-align:right;">
+          <div id="detail-status-badge"></div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem;" id="detail-eval-time"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trade Parameters -->
+    <div class="section" id="params-section">
+      <h2 style="font-size:0.875rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:1rem;">Trade Parameters</h2>
+      <div class="params-grid" id="params-grid"></div>
+    </div>
+
+    <!-- Scores -->
+    <div class="section">
+      <h2 style="font-size:0.875rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:1rem;">Scores</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;" id="scores-grid">
+        <div class="score-bar-container">
+          <div class="score-bar-label">
+            <span>Confidence</span><span id="conf-num">—</span>
+          </div>
+          <div class="score-bar-track"><div class="score-bar-fill" id="conf-bar"></div></div>
+        </div>
+        <div class="score-bar-container">
+          <div class="score-bar-label">
+            <span>Probability</span><span id="prob-num">—</span>
+          </div>
+          <div class="score-bar-track"><div class="score-bar-fill" id="prob-bar"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4-Agent Debate -->
+    <div class="section">
+      <h2 style="font-size:0.875rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:1rem;">4-Agent Debate</h2>
+      <div id="agents-container"></div>
+    </div>
+
+    <!-- Verdict Summary -->
+    <div class="section">
+      <h2 style="font-size:0.875rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:1rem;">Verdict Summary</h2>
+      <div class="verdict-columns">
+        <div class="verdict-col supporting">
+          <div class="verdict-col-title">Supporting Reasons</div>
+          <ul class="verdict-list" id="reasons-for"></ul>
+        </div>
+        <div class="verdict-col opposing">
+          <div class="verdict-col-title">Opposing Reasons</div>
+          <ul class="verdict-list" id="reasons-against"></ul>
+        </div>
+      </div>
+      <div class="verdict-summary-text" id="verdict-summary"></div>
+    </div>
+
+  </div><!-- #detail-view -->
+</div>
+
+<script src="/js/shared.js"></script>
+<script src="/js/detail.js"></script>
+</body>
+</html>

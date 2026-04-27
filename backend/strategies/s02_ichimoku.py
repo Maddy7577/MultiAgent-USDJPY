@@ -104,13 +104,6 @@ class S2Ichimoku(BaseStrategy):
             reasons_against = [c for c in short_conds if c not in short_met]
             compliance = ss
 
-        if compliance < 0.75:
-            return self._wait(direction,
-                              f"Need all 4 Ichimoku conditions — {int(compliance*4)}/4 met",
-                              [c for c in (long_conds if direction == "BUY" else short_conds)
-                               if c not in reasons_for],
-                              reasons_for, reasons_against)
-
         # ── Trade parameters ────────────────────────────────────────────────
         if direction == "BUY":
             entry = h4_close
@@ -124,6 +117,14 @@ class S2Ichimoku(BaseStrategy):
             risk = sl - entry
             tp1 = entry - 2 * risk
             tp2 = None
+
+        if compliance < 0.75:
+            return self._wait(direction,
+                              f"Need all 4 Ichimoku conditions — {int(compliance*4)}/4 met",
+                              [c for c in (long_conds if direction == "BUY" else short_conds)
+                               if c not in reasons_for],
+                              reasons_for, reasons_against,
+                              entry=round(entry, 3), sl=round(sl, 3), tp1=round(tp1, 3))
 
         rrr = rrr_calc(entry, sl, tp1)
         htf_conflict = (direction == "BUY" and not c1_long) or (direction == "SELL" and not c1_short)

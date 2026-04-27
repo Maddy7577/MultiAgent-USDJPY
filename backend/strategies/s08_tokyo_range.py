@@ -84,11 +84,15 @@ class S8TokyoRange(BaseStrategy):
             ]
             reasons_against = []
         else:
+            proj_entry = round(tokyo_high + 3 * pip, 3)
+            proj_sl = round(tokyo_low - 5 * pip, 3)
+            proj_tp1 = round(proj_entry + range_width, 3)
             return self._wait("BUY",
                               f"Tokyo range {tokyo_low:.3f}–{tokyo_high:.3f} ({range_pips:.0f} pips) — awaiting breakout",
                               ["Break above Tokyo high or below Tokyo low"],
                               [f"Range defined: {range_pips:.0f} pips, quality valid"],
-                              ["No breakout yet"])
+                              ["No breakout yet"],
+                              entry=proj_entry, sl=proj_sl, tp1=proj_tp1)
 
         rrr = rrr_calc(entry, sl, tp1)
         news_flags = ["High-impact news day — reduce breakout reliability"] if news else []

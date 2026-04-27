@@ -105,6 +105,32 @@ def run_debate(
         "risk_alignment_penalty": risk_alignment_penalty,
         "net_score": round(net_score, 2),
         "critical_flags": critical_deduped,
+        "agents": [
+            {
+                "name": "Opportunity Agent 1",
+                "score": opp1.score,
+                "conditions": opp1.conditions,
+                "flags": opp1.reasons,
+            },
+            {
+                "name": "Opportunity Agent 2",
+                "score": opp2.score,
+                "conditions": opp2.conditions,
+                "flags": opp2.reasons,
+            },
+            {
+                "name": "Risk Agent 1",
+                "score": risk1.risk_score,
+                "conditions": risk1.conditions,
+                "flags": risk1.risk_flags + [f for f in risk1.critical_flags if f not in risk1.risk_flags],
+            },
+            {
+                "name": "Risk Agent 2",
+                "score": risk2.risk_score,
+                "conditions": risk2.conditions,
+                "flags": risk2.risk_flags,
+            },
+        ],
     }
 
     # ── Auto-override to NO_TRADE if critical flags present ─────────────────

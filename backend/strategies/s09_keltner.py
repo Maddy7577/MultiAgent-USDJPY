@@ -96,12 +96,6 @@ class S9Keltner(BaseStrategy):
             reasons_against = [c for c in short_conds if c not in short_met]
             htf_align = daily_bearish
 
-        if compliance < 0.67:
-            missing = [c for c in (long_conds if direction == "BUY" else short_conds) if c not in reasons_for]
-            return self._wait(direction,
-                              f"Keltner break detected — waiting for pullback to midline {middle:.3f}",
-                              missing, reasons_for, reasons_against)
-
         if direction == "BUY":
             entry = h1_close
             sl = middle - 1.5 * h1_atr
@@ -112,6 +106,13 @@ class S9Keltner(BaseStrategy):
             sl = middle + 1.5 * h1_atr
             risk = sl - entry
             tp1 = entry - 2 * risk
+
+        if compliance < 0.67:
+            missing = [c for c in (long_conds if direction == "BUY" else short_conds) if c not in reasons_for]
+            return self._wait(direction,
+                              f"Keltner break detected — waiting for pullback to midline {middle:.3f}",
+                              missing, reasons_for, reasons_against,
+                              entry=round(entry, 3), sl=round(sl, 3), tp1=round(tp1, 3))
 
         rrr = rrr_calc(entry, sl, tp1)
 

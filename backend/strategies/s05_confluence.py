@@ -94,12 +94,6 @@ class S5Confluence(BaseStrategy):
             reasons_for = short_met
             reasons_against = [n for n, met in short_items if not met]
 
-        if (direction == "BUY" and long_score < 3) or (direction == "SELL" and short_score < 3):
-            return self._wait(direction,
-                              f"Need ≥3/4 confluence factors — {long_score if direction == 'BUY' else short_score}/4 met",
-                              [n for n, met in (long_items if direction == "BUY" else short_items) if not met],
-                              reasons_for, reasons_against)
-
         if direction == "BUY":
             entry = h4_close
             sl = (nearest_lv - h4_atr) if nearest_lv else (entry - 1.5 * h4_atr)
@@ -112,6 +106,13 @@ class S5Confluence(BaseStrategy):
             risk = sl - entry
             tp1 = entry - 2 * risk
             tp2 = entry - 3 * risk
+
+        if (direction == "BUY" and long_score < 3) or (direction == "SELL" and short_score < 3):
+            return self._wait(direction,
+                              f"Need ≥3/4 confluence factors — {long_score if direction == 'BUY' else short_score}/4 met",
+                              [n for n, met in (long_items if direction == "BUY" else short_items) if not met],
+                              reasons_for, reasons_against,
+                              entry=round(entry, 3), sl=round(sl, 3), tp1=round(tp1, 3))
 
         rrr = rrr_calc(entry, sl, tp1)
         htf_conflict = (direction == "BUY" and not la) or (direction == "SELL" and not sa)

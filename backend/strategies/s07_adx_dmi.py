@@ -74,11 +74,6 @@ class S7AdxDmi(BaseStrategy):
         conditions_missed = [name for name, met in conds if not met]
         compliance = len(conditions_met) / 4
 
-        if not at_pullback:
-            return self._wait(direction,
-                              f"Wait for H4 pullback/rally to EMA20 ({h4_ema20:.3f})",
-                              conditions_missed, conditions_met, conditions_missed)
-
         if direction == "BUY":
             entry = h4_close
             sl = entry - 1.5 * h4_atr
@@ -89,6 +84,12 @@ class S7AdxDmi(BaseStrategy):
             sl = entry + 1.5 * h4_atr
             tp1 = entry - 2 * h4_atr
             tp2 = entry - 3 * h4_atr
+
+        if not at_pullback:
+            return self._wait(direction,
+                              f"Wait for H4 pullback/rally to EMA20 ({h4_ema20:.3f})",
+                              conditions_missed, conditions_met, conditions_missed,
+                              entry=round(entry, 3), sl=round(sl, 3), tp1=round(tp1, 3))
 
         rrr = rrr_calc(entry, sl, tp1)
 

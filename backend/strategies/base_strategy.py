@@ -49,7 +49,7 @@ class StrategyResult:
             "rrr": self.rrr,
             "confidence": self.confidence,
             "probability": self.probability,
-            "timeframes": "/".join(self.timeframes),
+            "timeframes": json.dumps(self.timeframes),
             "wait_zone": self.wait_zone,
             "conditions_to_meet": json.dumps(self.conditions_to_meet),
             "reasons_for": json.dumps(self.reasons_for),
@@ -100,15 +100,25 @@ class BaseStrategy:
         )
 
     def _wait(self, direction: str, wait_zone: str, conditions_to_meet: list,
-              reasons_for: list, reasons_against: list) -> StrategyResult:
+              reasons_for: list, reasons_against: list,
+              entry: Optional[float] = None, sl: Optional[float] = None,
+              tp1: Optional[float] = None) -> StrategyResult:
+        rrr = None
+        if entry is not None and sl is not None and tp1 is not None:
+            risk = abs(entry - sl)
+            reward = abs(tp1 - entry)
+            rrr = round(reward / risk, 2) if risk > 0 else None
+        total = len(reasons_for) + len(conditions_to_meet)
+        compliance = len(reasons_for) / total if total > 0 else 0.5
+        confidence = max(35, min(65, int(35 + 30 * compliance)))
         return StrategyResult(
             strategy_id=self.STRATEGY_ID,
             strategy_name=self.STRATEGY_NAME,
             strategy_type=self.STRATEGY_TYPE,
             status="WAIT_FOR_LEVELS",
             direction=direction,
-            entry=None, sl=None, tp1=None, tp2=None, tp3=None, rrr=None,
-            confidence=45, probability=45,
+            entry=entry, sl=sl, tp1=tp1, tp2=None, tp3=None, rrr=rrr,
+            confidence=confidence, probability=confidence,
             timeframes=self.TIMEFRAMES,
             wait_zone=wait_zone,
             conditions_to_meet=conditions_to_meet,

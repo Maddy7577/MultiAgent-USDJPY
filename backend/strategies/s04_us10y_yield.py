@@ -123,13 +123,6 @@ class S4Us10yYield(BaseStrategy):
         if compliance < 0.6:
             return self._no_trade([f"Insufficient conditions met ({int(compliance*5)}/5)"] + reasons_against)
 
-        if compliance < 0.8:
-            return self._wait(direction,
-                              "Wait for H4 EMA20 pullback with rejection candle during NY session",
-                              [c for c in (long_conds if direction == "BUY" else short_conds)
-                               if c not in reasons_for],
-                              reasons_for, reasons_against)
-
         if direction == "BUY":
             entry = h4_close
             sl = (h4_swing_low or entry - 1.5 * h4_atr) - 0.5 * h4_atr
@@ -142,6 +135,14 @@ class S4Us10yYield(BaseStrategy):
             risk = sl - entry
             tp1 = entry - 2 * risk
             tp2 = entry - 3 * risk
+
+        if compliance < 0.8:
+            return self._wait(direction,
+                              "Wait for H4 EMA20 pullback with rejection candle during NY session",
+                              [c for c in (long_conds if direction == "BUY" else short_conds)
+                               if c not in reasons_for],
+                              reasons_for, reasons_against,
+                              entry=round(entry, 3), sl=round(sl, 3), tp1=round(tp1, 3))
 
         rrr = rrr_calc(entry, sl, tp1)
         htf_conflict = (direction == "BUY" and not c3_long) or (direction == "SELL" and not c3_short)

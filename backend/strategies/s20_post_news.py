@@ -28,12 +28,12 @@ class S20PostNews(BaseStrategy):
     def evaluate(self) -> StrategyResult:
         ctx = self.ctx
         ind = self.ind
-        next_events = ctx.get("next_events", [])
+        recent_events = ctx.get("recent_events", [])
 
         # ── Find a recently fired Tier 1 event ──────────────────────────────
         now = datetime.now(timezone.utc)
         recent_event = None
-        for ev in next_events:
+        for ev in recent_events:
             ev_time = ev.get("datetime_utc")
             if ev_time is None:
                 continue
@@ -112,11 +112,15 @@ class S20PostNews(BaseStrategy):
             reasons_against = []
 
         else:
+            proj_entry = round(post_high + 5 * pip, 3)
+            proj_sl = round(post_low - 5 * pip, 3)
+            proj_tp1 = round(proj_entry + 2 * post_range, 3)
             return self._wait("BUY",
                               f"Post-{event_name} range forming ({post_range_pips:.0f} pips) — await directional break",
                               ["Break of post-news range + RSI confirmation"],
                               [f"Event: {event_name} {minutes_ago:.0f} min ago, range {post_range_pips:.0f} pips"],
-                              ["No directional break yet"])
+                              ["No directional break yet"],
+                              entry=proj_entry, sl=proj_sl, tp1=proj_tp1)
 
         rrr = rrr_calc(entry, sl, tp1)
         # Elevated spread during news is a concern

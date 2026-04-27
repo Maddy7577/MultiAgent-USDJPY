@@ -166,7 +166,7 @@ def get_signal_counts() -> dict:
         rows = conn.execute(
             "SELECT status, COUNT(*) as n FROM signals GROUP BY status"
         ).fetchall()
-    counts = {"VALID": 0, "WAIT": 0, "NO_TRADE": 0}
+    counts = {"VALID_TRADE": 0, "WAIT_FOR_LEVELS": 0, "NO_TRADE": 0}
     for row in rows:
         if row["status"] in counts:
             counts[row["status"]] = row["n"]

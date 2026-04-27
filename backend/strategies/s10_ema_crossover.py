@@ -70,11 +70,6 @@ class S10EmaCrossover(BaseStrategy):
         conditions_missed = [name for name, met in conds if not met]
         compliance = len(conditions_met) / 4
 
-        if not at_pullback:
-            return self._wait(direction,
-                              f"Cross confirmed — wait for pullback to H4 EMA50 ({h4_ema50:.3f})",
-                              conditions_missed, conditions_met, conditions_missed)
-
         if direction == "BUY":
             swing_ref = h4_swing_low or h4_close - 2 * h4_atr
             entry = h4_close
@@ -87,6 +82,12 @@ class S10EmaCrossover(BaseStrategy):
             sl = swing_ref + h4_atr
             risk = sl - entry
             tp1 = entry - 1.5 * risk
+
+        if not at_pullback:
+            return self._wait(direction,
+                              f"Cross confirmed — wait for pullback to H4 EMA50 ({h4_ema50:.3f})",
+                              conditions_missed, conditions_met, conditions_missed,
+                              entry=round(entry, 3), sl=round(sl, 3), tp1=round(tp1, 3))
 
         rrr = rrr_calc(entry, sl, tp1)
 

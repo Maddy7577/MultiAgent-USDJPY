@@ -59,11 +59,14 @@ class S15Engulfing(BaseStrategy):
             ])
 
         if not bullish_eng and not bearish_eng:
+            proj_sl = round(h4_close - 1.5 * h4_atr, 3)
+            proj_tp1 = round(h4_close + 2.25 * h4_atr, 3)
             return self._wait("BUY",
                               f"At key level {nearest_lv} — waiting for engulfing candle",
                               ["Bullish or bearish engulfing candle to form"],
                               [f"Price at key level {nearest_lv} ({dist_pips:.0f} pips away)"],
-                              ["No engulfing pattern yet"])
+                              ["No engulfing pattern yet"],
+                              entry=round(h4_close, 3), sl=proj_sl, tp1=proj_tp1)
 
         d_bullish = d_ema50 is not None and d_close > d_ema50
         d_bearish = d_ema50 is not None and d_close < d_ema50

@@ -98,9 +98,11 @@ class S14BollingerMR(BaseStrategy):
                 missed.append("Band wick detected but no bullish confirmation candle yet")
             elif prev_wicked_above and not curr_bearish:
                 missed.append("Band wick detected but no bearish confirmation candle yet")
+            proj_sl = round(lower - 0.5 * h1_atr, 3)
             return self._wait("BUY",
                               f"BB MR: wait for band touch + confirmation. Bands: {lower:.3f}–{upper:.3f}",
-                              missed, reasons_for, missed)
+                              missed, reasons_for, missed,
+                              entry=round(lower, 3), sl=proj_sl, tp1=round(middle, 3))
 
         rrr = rrr_calc(entry, sl, tp1)
 
