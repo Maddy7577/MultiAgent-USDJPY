@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>USDJPY Smart Agent — Signal History</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<nav class="nav">
+  <span class="nav-title">USDJPY Smart Agent</span>
+  <a href="/index.html" class="nav-link">Dashboard</a>
+  <a href="/strategies.html" class="nav-link">Strategies</a>
+  <a href="/history.html" class="nav-link">History</a>
+  <span class="mt5-dot" id="mt5-dot" title="MT5 status"></span>
+  <span class="nav-price" id="nav-price">—</span>
+  <span class="nav-clock" id="nav-clock">—</span>
+  <span class="nav-countdown" id="nav-countdown"></span>
+</nav>
+
+<div class="stale-banner" id="stale-banner"></div>
+
+<div class="container">
+
+  <!-- Stats bar -->
+  <div class="history-stats-bar" id="stats-bar">
+    <span id="stat-total">— signals</span>
+    <span id="stat-valid">— VALID TRADE</span>
+    <span id="stat-winrate">Win Rate: —</span>
+    <span id="stat-avg-conf">Avg Confidence: —</span>
+  </div>
+
+  <!-- Filter row -->
+  <div class="history-filters">
+    <select id="filter-strategy">
+      <option value="">All Strategies</option>
+      <option value="1">S1 — Multi-Timeframe Trend</option>
+      <option value="2">S2 — Ichimoku Cloud</option>
+      <option value="3">S3 — Carry Trade Pullback</option>
+      <option value="4">S4 — US10Y Yield Correlation</option>
+      <option value="5">S5 — Confluence System</option>
+      <option value="6">S6 — MACD + 200 EMA</option>
+      <option value="7">S7 — ADX + DMI Filter</option>
+      <option value="8">S8 — Tokyo Range Breakout</option>
+      <option value="9">S9 — Keltner Channel Breakout</option>
+      <option value="10">S10 — 50/200 EMA Crossover</option>
+      <option value="11">S11 — Asian Session Range Fade</option>
+      <option value="12">S12 — Donchian/Turtle Breakout</option>
+      <option value="13">S13 — London Open Breakout</option>
+      <option value="14">S14 — Bollinger Band Mean Reversion</option>
+      <option value="15">S15 — Engulfing at Key Level</option>
+      <option value="16">S16 — RSI Mean Reversion</option>
+      <option value="17">S17 — Fibonacci Pullback</option>
+      <option value="18">S18 — Inside Bar Breakout</option>
+      <option value="19">S19 — Daily Pivot Breakout</option>
+      <option value="20">S20 — Post-News Breakout</option>
+    </select>
+
+    <select id="filter-status">
+      <option value="">All Statuses</option>
+      <option value="VALID_TRADE">Valid Trade</option>
+      <option value="WAIT_FOR_LEVELS">Wait for Levels</option>
+      <option value="NO_TRADE">No Trade</option>
+    </select>
+
+    <input type="date" id="filter-from" title="From date">
+    <input type="date" id="filter-to" title="To date">
+
+    <button class="filter-btn active" id="apply-filters">Apply Filters</button>
+    <button class="filter-btn" id="reset-filters">Reset</button>
+  </div>
+
+  <!-- Table -->
+  <div style="overflow-x:auto;">
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th>Timestamp (UTC)</th>
+          <th>Strategy</th>
+          <th>Status</th>
+          <th>Direction</th>
+          <th>Entry</th>
+          <th>SL</th>
+          <th>TP1</th>
+          <th>RRR</th>
+          <th>Confidence</th>
+          <th>Outcome</th>
+        </tr>
+      </thead>
+      <tbody id="history-tbody">
+        <tr><td colspan="10" class="empty-state">Loading…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" id="pagination"></div>
+
+</div>
+
+<script src="/js/shared.js"></script>
+<script src="/js/history.js"></script>
+</body>
+</html>

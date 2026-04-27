@@ -8,11 +8,12 @@ logger = logging.getLogger(__name__)
 _scheduler = BackgroundScheduler(timezone="UTC")
 last_h1_eval_time: str = "never"
 last_daily_refresh_time: str = "never"
+_last_valid_strategy_ids: set = set()
 
 
 def _h1_evaluation():
     """Full 20-strategy evaluation cycle — runs on every H1 candle close."""
-    global last_h1_eval_time
+    global last_h1_eval_time, _last_valid_strategy_ids
     from datetime import datetime, timezone
     from backend.strategies.evaluation_orchestrator import run_evaluation_cycle
     from backend.db import signal_store
@@ -22,6 +23,19 @@ def _h1_evaluation():
         if signal_store.is_initialized():
             signal_store.batch_insert_signals(results)
         last_h1_eval_time = datetime.now(tz=timezone.utc).isoformat()
+
+        # Detect strategies that are newly VALID this cycle (transition detection)
+        current_valid_ids = {r.strategy_id for r in results if r.status == "VALID_TRADE"}
+        newly_valid = [r for r in results if r.strategy_id in (current_valid_ids - _last_valid_strategy_ids)]
+        _last_valid_strategy_ids = current_valid_ids
+
+        if newly_valid:
+            from backend.notifications.telegram_bot import send_valid_trade_alert
+            for result in newly_valid:
+                success = send_valid_trade_alert(result)
+                if not success and signal_store.is_initialized():
+                    signal_store.mark_telegram_failed(result.strategy_id)
+
     except Exception as exc:
         logger.error(f"H1 evaluation cycle failed: {exc}", exc_info=True)
         last_h1_eval_time = f"ERROR: {exc}"

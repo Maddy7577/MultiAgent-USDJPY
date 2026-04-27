@@ -9,7 +9,11 @@
       "PowerShell(Invoke-RestMethod -Uri \"http://localhost:8000/api/strategy/1\" -Method GET | ConvertTo-Json -Depth 6)",
       "Bash(xargs grep *)",
       "Bash(py -c \"from backend import config; from backend.api import dashboard, strategies, history, status; print\\('Imports OK'\\)\")",
-      "Bash(curl *)"
+      "Bash(curl *)",
+      "Bash(where python.exe)",
+      "Bash(where py.exe)",
+      "Bash(py --version)",
+      "Bash(py -c \"from backend.notifications.telegram_bot import send_valid_trade_alert; print\\('telegram_bot OK'\\)\")"
     ]
   }
 }
