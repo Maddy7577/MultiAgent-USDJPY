@@ -1,6 +1,9 @@
 .env
+*.env
 data/usdjpy_signals.db
+data/*.db
 __pycache__/
+**/__pycache__/
 *.pyc
 *.pyo
 .pytest_cache/
